@@ -56,21 +56,6 @@ const gameMap2 = {
   },
 };
 
-const getGameResult = (round) => {
-  const [player1, player2] = round;
-  return gameMap[player1][player2];
-}
+const gameScore = (custom_map) => rounds.map((player) => custom_map[player[0]][player[1]]).reduce((acc, score) => acc + score, 0);
 
-const getGameResult2 = (round) => {
-  const [player1, player2] = round;
-  return gameMap2[player1][player2];
-}
-
-const getGameResults = (rounds) => rounds.map(getGameResult2);
-
-const getGameScore = (gameResults) => gameResults.reduce((acc, result) => acc + result, 0);
-
-const gameResults = getGameResults(rounds);
-const gameScore = getGameScore(gameResults);
-
-console.log(gameScore);
+console.log(gameScore(gameMap2));
