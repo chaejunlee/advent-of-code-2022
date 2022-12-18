@@ -19,16 +19,36 @@ const getPriority = (a) => {
 // for each characters in the left half,
 // find the corresponding character in the right half
 let result = 0;
-for (let i = 0; i < firstHalfs.length; i++) {
-  const firstHalf = firstHalfs[i];
-  const secondHalf = secondHalfs[i];
+// for (let i = 0; i < firstHalfs.length; i++) {
+//   const firstHalf = firstHalfs[i];
+//   const secondHalf = secondHalfs[i];
+//   let highChar = 0;
+//   for (let k = 0; k < firstHalf.length; k++) {
+//     const first = getPriority(firstHalf[k]) + 1;
+//     for (let l = 0; l < secondHalf.length; l++) {
+//       const second = getPriority(secondHalf[l]) + 1;
+//       if (first === second) {
+//         highChar = (highChar < first) ? first : highChar;
+//       }
+//     }
+//   }
+//   result += highChar;
+// }
+
+for (let i = 0; i < rucksacks.length; i += 3) {
+  const first = rucksacks[i];
+  const second = rucksacks[i + 1];
+  const third = rucksacks[i + 2];
   let highChar = 0;
-  for (let k = 0; k < firstHalf.length; k++) {
-    const first = getPriority(firstHalf[k]) + 1;
-    for (let l = 0; l < secondHalf.length; l++) {
-      const second = getPriority(secondHalf[l]) + 1;
-      if (first === second) {
-        highChar = (highChar < first) ? first : highChar;
+  for (let k = 0; k < first.length; k++) {
+    const firstChar = getPriority(first[k]) + 1;
+    for (let l = 0; l < second.length; l++) {
+      const secondChar = getPriority(second[l]) + 1;
+      if (firstChar !== secondChar) continue;
+      for (let m = 0; m < third.length; m++) {
+        const thirdChar = getPriority(third[m]) + 1;
+        if (secondChar !== thirdChar) continue;
+        highChar = (firstChar > highChar) ? firstChar : highChar;
       }
     }
   }
