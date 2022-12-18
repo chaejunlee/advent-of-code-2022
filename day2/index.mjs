@@ -28,12 +28,45 @@ const gameMap = {
   },
 };
 
+// Part 2
+
+// A: rock => 1
+// B: paper => 2
+// C: scissors => 3
+
+// X: lose => 0
+// Y: draw => 3
+// Z: win => 6
+
+const gameMap2 = {
+  "A": {
+    "X": 0 + 3,
+    "Y": 3 + 1,
+    "Z": 6 + 2,
+  },
+  "B": {
+    "X": 0 + 1,
+    "Y": 3 + 2,
+    "Z": 6 + 3,
+  },
+  "C": {
+    "X": 0 + 2,
+    "Y": 3 + 3,
+    "Z": 6 + 1,
+  },
+};
+
 const getGameResult = (round) => {
   const [player1, player2] = round;
   return gameMap[player1][player2];
 }
 
-const getGameResults = (rounds) => rounds.map(getGameResult);
+const getGameResult2 = (round) => {
+  const [player1, player2] = round;
+  return gameMap2[player1][player2];
+}
+
+const getGameResults = (rounds) => rounds.map(getGameResult2);
 
 const getGameScore = (gameResults) => gameResults.reduce((acc, result) => acc + result, 0);
 
