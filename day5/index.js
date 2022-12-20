@@ -21,12 +21,23 @@ const operations = lines.map(line => {
   return [line[1], line[3], line[5]].map(Number);
 })
 
+// operations.forEach(operation => {
+//   const [amount, from, to] = operation;
+
+//   for (let i = 0; i < amount; i++) {
+//     crates[to].push(crates[from].pop())
+//   }
+// })
+
 operations.forEach(operation => {
   const [amount, from, to] = operation;
 
+  let movingItems = [];
   for (let i = 0; i < amount; i++) {
-    crates[to].push(crates[from].pop())
+    movingItems.push(crates[from].pop())
   }
+
+  movingItems.reverse().forEach(item => crates[to].push(item))
 })
 
 console.log(crates.map(crate => crate.reverse()[0]).join(""))
