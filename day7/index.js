@@ -67,7 +67,7 @@ function dfs(node) {
   }
   if (node._size <= 100_000)
     answer += node._size;
-  console.log(node)
+  //console.log(node)
   return node._size;
 }
 
@@ -80,6 +80,22 @@ for (const key in root.child) {
 
 console.log(answer);
 
-console.dir(root, { depth: 3 });
+console.dir(root._size - 40_000_000);
 
-// 1581595
+let minSize = 70_000_000;
+
+function checkSize(node) {
+  for (const key in node) {
+    if (key === '_size') {
+      const size = node[key];
+      console.log(size)
+      if (size >= (root._size - 40_000_000) && size <= minSize)
+        minSize = size;
+    }
+    checkSize(node[key]);
+  }
+}
+checkSize(root.child)
+console.log(minSize);
+
+// not 19628923
