@@ -3,67 +3,83 @@ const data = require('./data.js').data;
 // cd * ls => everything in the current directory
 // cd .. can be ignored?
 
-function cleanse(data) {
-  const directory = {};
+const lines = data.split("\n").map(line => line.trim());
 
-  const lines = data.split("\n").map(line => line.trim());
+// strcuture
+// name of current directory
+// pointer to parent directory
+// pointers to child directories
 
-  for (let i = 0; i < lines.length; i++) {
-    if (lines[i].startsWith('$ cd ..')) continue;
-    if (lines[i].startsWith('$ cd')) {
-      const path = lines[i].split(' ')[2];
-      // console.log(path)
-      if (directory[path]) {
-        console.log(path);
-        continue;
-      }
-      directory[path] = [];
-      for (let j = i + 1; j < lines.length; j++) {
-        if (lines[j].startsWith('$ ls')) continue;
-        if (lines[j].startsWith('$ cd')) {
-          i = j - 1;
-          break;
-        }
-        directory[path].push(lines[j]);
-      }
+let answer = 0;
+
+function makeNode(start) {
+  const node = { _size: 0 };
+  for (let i = start; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.startsWith("$ cd")) {
+      return { index: i - 1, node };
+    }
+
+    const words = line.split(" ");
+    if (words[0] === "dir")
+      node[words[1]] = 0;
+    else
+      node._size += Number(words[0]);
+  }
+  return { index: lines.length - 1, node };
+}
+
+function makeTree(parent, dirname, start) {
+  let root = { parent: parent, current: dirname, child: {}, _size: 0, index: start };
+  let words = {};
+  for (let i = start; i < lines.length; i++) {
+    const line = lines[i];
+    // console.log(i);
+    if (line.startsWith("$ ls")) {
+      const newNode = makeNode(i + 1);
+      root.child = newNode.node;
+      i = newNode.index;
+      continue;
+    }
+    if (line.startsWith("$ cd ..")) {
+      root.index = i;
+      return root;
+    }
+    if (line.startsWith("$ cd")) {
+      words = line.split(" ");
+      const result = makeTree(root.current, words[2], i + 1);
+
+      root.child[words[2]] = result.child;
+      i = result.index;
+      continue;
     }
   }
-  return directory;
+  root.index = lines.length - 1;
+  return root;
 }
 
-const lists = cleanse(data);
-const sizes = {};
+const root = makeTree(null, '/', 1);
 
-let totalSize = 0;
-
-function dfs(path) {
-  if (sizes[path]) return sizes[path];
-  let size = 0;
-  for (const item of lists[path]) {
-    const line = item.split(' ');
-    if (line[0] === "dir")
-      size += dfs(line[1]);
-    else
-      size += Number(line[0]);
+function dfs(node) {
+  for (const key in node) {
+    if (key === '_size') continue;
+    node._size += dfs(node[key]);
   }
-  sizes[path] = size;
-  // console.log(lists[path], size);
-  return size;
+  if (node._size <= 100_000)
+    answer += node._size;
+  console.log(node)
+  return node._size;
 }
 
-dfs("/");
-
-console.log(Object.keys(sizes).length)
-
-for (const path in lists) {
-  if (dfs(path) <= 100_000) {
-    totalSize += sizes[path];
-  }
+for (const key in root.child) {
+  if (key === '_size') continue;
+  const size = dfs(root.child[key]);
+  if (size <= 100_000) answer += size;
+  root._size += size;
 }
 
-console.log(Object.keys(sizes).length)
+console.log(answer);
 
-console.log(totalSize);
+console.dir(root, { depth: 3 });
 
-// not 585395
-// not 1028106
+// 1581595
