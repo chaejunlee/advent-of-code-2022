@@ -71,9 +71,73 @@ const visibleTrees = isVisible.reduce((acc, row) => {
   return acc + row.reduce((acc, col) => acc + col, 0);
 }, 0);
 
-console.log(isVisible);
+// console.log(isVisible);
 
-console.log(visibleTrees);
+function toLeft(y, x) {
+  const tree = lines[y][x];
+  let count = 0;
+  for (let i = x - 1; i >= 0; i--) {
+    count++;
+    if (tree <= lines[y][i]) return count;
+  }
+  return count;
+}
+
+function toRight(y, x) {
+  const tree = lines[y][x];
+  let count = 0;
+  for (let i = x + 1; i < cols; i++) {
+    count++;
+    if (tree <= lines[y][i]) return count;
+  }
+  return count;
+}
+
+function toTop(y, x) {
+  const tree = lines[y][x];
+  let count = 0;
+  for (let i = y - 1; i >= 0; i--) {
+    count++;
+    if (tree <= lines[i][x]) return count;
+  }
+  return count;
+}
+
+function toBottom(y, x) {
+  const tree = lines[y][x];
+  let count = 0;
+  for (let i = y + 1; i < rows; i++) {
+    count++;
+    if (tree <= lines[i][x]) return count;
+  }
+  return count;
+}
+
+let highestScore = 0;
+function fromTree() {
+  for (let i = 1; i < rows - 1; i++) {
+    for (let j = 1; j < cols - 1; j++) {
+      let top = toTop(i, j);
+      let left = toLeft(i, j);
+      let bottom = toBottom(i, j);
+      let right = toRight(i, j);
+      const count = left * right * top * bottom;
+      console.log(i, j, lines[i][j], top, left, bottom, right, count);
+      if (count > highestScore) {
+        highestScore = count;
+      }
+    }
+  }
+}
+fromTree();
+console.log(highestScore);
 
 // 295 no
 // 392 no
+
+// 4080 no
+// 5929 no
+// 13090 no
+// 4120956 no
+// 3720600 no
+// 3347344 no
