@@ -2,7 +2,13 @@ const data = require('./data').data;
 
 const lines = data.split("\n").map(line => line.trim());
 
-// (5-2)*5
+/**
+ * I thought of the algorithm correctly, but I was stupid
+ * enough that I could not implement it correctly.
+ * 
+ * Very unimpressed with myself.
+ *  
+ * */
 
 const DecimalsToSNAFU = (decimal) => {
   let minus = false;
