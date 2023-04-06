@@ -29,34 +29,46 @@ let knots = [
   { y: 0, x: 0 },
   { y: 0, x: 0 },
 ];
-let checker = new Set();
-checker.add(JSON.stringify(knots[9]));
+let tracer = new Set();
+tracer.add(JSON.stringify(knots[9]));
 
-for (const dir_char of moves) {
-  const direction = dir[dir_char.direction];
-  for (let i = 0; i < dir_char.move; i++) {
-    knots[0].x += direction.x;
-    knots[0].y += direction.y;
+const follow = (knot) => {
+  const prev = knots[knot - 1];
+  const curr = knots[knot];
+  const yDiff = (prev.y - curr.y);
+  const xDiff = (prev.x - curr.x);
 
-    for (let knot = 1; knot <= 9; knot++) {
-      const yDiff = (knots[knot - 1].y - knots[knot].y);
-      const xDiff = (knots[knot - 1].x - knots[knot].x);
-
-      if (Math.abs(yDiff) <= 1 && Math.abs(xDiff) <= 1) {
-        continue;
-      }
-
-      const yMove = yDiff == 0 ? 0 : yDiff < 0 ? -1 : 1;
-      const xMove = xDiff == 0 ? 0 : xDiff < 0 ? -1 : 1;
-
-      // calculating this part was awful
-      // I thought it was just copy pasting previous points, but it was not.
-      // need to do some serious calculations
-      knots[knot].x += xMove;
-      knots[knot].y += yMove;
-    }
-    checker.add(JSON.stringify(knots[9]));
+  if (Math.abs(yDiff) <= 1 && Math.abs(xDiff) <= 1) {
+    return;
   }
+  // calculating this part was awful
+  // I thought it was just copy pasting previous points, but it was not.
+  // need to do some serious calculations
+  const yMove = yDiff == 0 ? 0 : yDiff < 0 ? -1 : 1;
+  const xMove = xDiff == 0 ? 0 : xDiff < 0 ? -1 : 1;
+
+  curr.x += xMove;
+  curr.y += yMove;
 }
 
-console.log(checker.size);
+const updateTracer = () => {
+  tracer.add(JSON.stringify(knots[9]));
+}
+
+const moveHead = (direction) => {
+  const head = knots[0];
+  head.x += direction.x;
+  head.y += direction.y;
+}
+
+moves.forEach(({ direction, move }) => {
+  for (let i = 0; i < move; i++) {
+    moveHead(dir[direction]);
+    for (let knot = 1; knot <= 9; knot++) {
+      follow(knot);
+      updateTracer();
+    }
+  }
+});
+
+console.log(tracer.size);
