@@ -1,24 +1,35 @@
 const { data } = require('./data');
 
 const lines = data.split("\n").map(line => line.trim());
-// console.log(lines);
+
+/**
+ * There were a lot of repetitive for loops with tricky
+ * conditions. Tweaking the conditions was a pain. I messed
+ * up with syncing the conditions with the loops. I thought of
+ * DRYing the code, but I didn't because I thought it would
+ * take more time. I was wrong. I should have DRYed the code.
+ * Finding the errors between code took way more time.
+ * 
+ * I learned how to make fixed length 2D arrays in JS using
+ * Array.fill().
+ */
 
 const rows = lines.length;
 const cols = lines[0].length;
 
-// console.log(rows, cols);
-
 const isVisible = new Array(rows).fill(0).map(() => new Array(cols).fill(0));
+
+function checkTree(y, x, highestTree) {
+  const tree = Number(lines[y][x]);
+  if (tree > highestTree) isVisible[y][x] = 1;
+  return Math.max(tree, highestTree);
+}
 
 function FromLeft() {
   for (let i = 0; i < rows; i++) {
     let highestTree = -1;
     for (let j = 0; j < cols; j++) {
-      const tree = Number(lines[i][j]);
-      if (tree > highestTree) {
-        highestTree = tree;
-        isVisible[i][j] = 1;
-      }
+      highestTree = checkTree(i, j, highestTree);
     }
   }
 }
@@ -27,11 +38,7 @@ function fromRight() {
   for (let i = 0; i < rows; i++) {
     let highestTree = -1;
     for (let j = cols - 1; j >= 0; j--) {
-      const tree = Number(lines[i][j]);
-      if (tree > highestTree) {
-        highestTree = tree;
-        isVisible[i][j] = 1;
-      }
+      highestTree = checkTree(i, j, highestTree);
     }
   }
 }
@@ -40,11 +47,7 @@ function fromTop() {
   for (let i = 0; i < cols; i++) {
     let highestTree = -1;
     for (let j = 0; j < rows; j++) {
-      const tree = Number(lines[j][i]);
-      if (tree > highestTree) {
-        highestTree = tree;
-        isVisible[j][i] = 1;
-      }
+      highestTree = checkTree(j, i, highestTree);
     }
   }
 }
@@ -53,11 +56,7 @@ function fromBottom() {
   for (let i = 0; i < cols; i++) {
     let highestTree = -1;
     for (let j = rows - 1; j >= 0; j--) {
-      const tree = Number(lines[j][i]);
-      if (tree > highestTree) {
-        highestTree = tree;
-        isVisible[j][i] = 1;
-      }
+      highestTree = checkTree(j, i, highestTree);
     }
   }
 }
@@ -72,7 +71,6 @@ const visibleTrees = isVisible.reduce((acc, row) => {
 }, 0);
 
 // console.log(isVisible);
-
 function toLeft(y, x) {
   const tree = lines[y][x];
   let count = 0;
@@ -131,6 +129,8 @@ function fromTree() {
 }
 fromTree();
 console.log(highestScore);
+
+console.log(Array(lines[0]).reverse());
 
 // 295 no
 // 392 no
